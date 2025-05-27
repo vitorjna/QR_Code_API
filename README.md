@@ -1,26 +1,27 @@
-
-
 # QR Code Generator API
 
 This project provides a simple API for generating QR codes. It allows users to generate QR codes by providing data and optional parameters such as size, error correction level, and output format.
 
 ## Table of Contents
 
-*   [Features](#features)
-*   [How to Use](#how-to-use)
-*   [Local Setup and Installation](#local-setup-and-installation)
-*   [Running with Docker](#running-with-docker)
-*   [API Usage](#api-usage)
-*   [Error Handling](#error-handling)
-*   [Technologies Used](#technologies-used)
+* [Features](#features)
+* [How to Use](#how-to-use)
+  * [Local Setup and Installation](#local-setup-and-installation)
+  * [Running with Docker](#running-with-docker)
+* [API Usage](#api-usage)
+  * [Endpoint](#endpoint)
+  * [Query Parameters](#query-parameters)
+  * [Examples](#examples)
+* [Error Handling](#error-handling)
+* [Technologies Used](#technologies-used)
 
 ## Features
 
-*   Generate QR codes from text data.
-*   Customize QR code size.
-*   Choose error correction level (L, M, Q, H).
-*   Support for multiple output formats: PNG, JPEG, BMP, GIF, and SVG.
-*   Customizable margin around the QR code.
+* Generate QR codes from text data.
+* Customize QR code size.
+* Choose error correction level (L, M, Q, H).
+* Support for multiple output formats: PNG, JPEG, BMP, GIF, and SVG.
+* Customizable margin around the QR code.
 
 ## How to Use
 The project can be run in 2 ways:
@@ -55,16 +56,16 @@ To run this project locally, follow these steps:
     
    To run this project using Docker and Docker Compose, follow these steps:
     
-   1.  **Prerequisites:**
-        *   Ensure you have Docker and Docker Compose installed on your system.
+1.  **Prerequisites:**
+        Ensure you have Docker and Docker Compose installed on your system.
     
-    2.  **Run the Docker container:**
-        ```bash
-        docker compose --profile QR up -d
-        ```
-        This command will pull the `python:3.13.2-slim` Docker image (if not already present) and start the `qr-generator` service. It will also install the dependencies and run the application inside the container.
-    
-    3.  **Access the API:**
+2.  **Run the Docker container:**
+    ```bash
+    docker compose --profile QR up -d
+    ```
+    This command will pull the `python:3.13.2-slim` Docker image (if not already present) and start the `qr-generator` service. It will also install the dependencies and run the application inside the container.
+
+3.  **Access the API:**
         The API will be accessible at `http://localhost:77`.
     
 ## API Usage
