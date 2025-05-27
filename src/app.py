@@ -16,7 +16,7 @@ mimetype_map = {
     'JPEG': 'image/jpeg',
     'BMP': 'image/bmp',
     'GIF': 'image/gif',
-    'SVG': 'image/svg',
+    'SVG': 'image/svg+xml',
 }
 
 app = Flask(__name__)
@@ -62,10 +62,11 @@ def generate_qr():
             img.save(buf, format=output_format)
             buf.seek(0)
         
-        return send_file(buf, mimetype=mimetype_map.get(output_format, 'application/octet-stream'))
+        extension = output_format.lower()
+        return send_file(buf, mimetype=mimetype_map.get(output_format, 'application/octet-stream'), download_name=f"qr_code.{extension}")
 
     except Exception as e:
         return f"Error generating QR code: {e}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=7777)
+    app.run(host='0.0.0.0', port=7777, ssl_context='adhoc')
