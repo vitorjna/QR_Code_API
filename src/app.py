@@ -50,9 +50,7 @@ def generate_qr():
         qr.make(fit=True)
 
         if output_format == "SVG":
-            img = qr.make_image(image_factory=qrcode.image.svg.SvgPathImage,
-                                fill_color="pink",
-                                back_color="white")
+            img = qr.make_image(image_factory=qrcode.image.svg.SvgPathImage)
             buf = io.BytesIO(img.to_string())
             buf.seek(0)
         
