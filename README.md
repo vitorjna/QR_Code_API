@@ -50,7 +50,7 @@ To run this project locally, follow these steps:
     ```bash
     python src/app.py
     ```
-    The API will be running on `http://localhost:77`.
+    The API will be running on `http://localhost:7777`.
     
 ### Running with Docker
     
@@ -66,7 +66,7 @@ To run this project locally, follow these steps:
     This command will pull the `python:3.13.2-slim` Docker image (if not already present) and start the `qr-generator` service. It will also install the dependencies and run the application inside the container.
 
 3.  **Access the API:**
-        The API will be accessible at `http://localhost:77`.
+        The API will be accessible at `http://localhost:7777`.
     
 ## API Usage
 
@@ -88,17 +88,17 @@ The API exposes a single endpoint for QR code generation: `/generate_qr`.
 
 1.  **Generate a basic SVG QR code:**
     ```
-    http://localhost:77/generate_qr?data=Hello%20World
+    http://localhost:7777/generate_qr?data=Hello%20World
     ```
 
 2.  **Generate a PNG QR code with custom size and error correction:**
     ```
-    http://localhost:77/generate_qr?data=https://www.example.com&size=10&ecc=H&format=PNG
+    http://localhost:7777/generate_qr?data=https://www.example.com&size=10&ecc=H&format=PNG
     ```
 
 3.  **Generate a JPEG QR code with a larger margin:**
     ```
-    http://localhost:77/generate_qr?data=My%20Custom%20Text&format=JPEG&margin=10
+    http://localhost:7777/generate_qr?data=My%20Custom%20Text&format=JPEG&margin=10
     ```
 
 ## Error Handling

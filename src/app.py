@@ -29,17 +29,16 @@ def generate_qr():
 
     try:
         # Optional parameters
-        box_size = request.args.get('size', 50, type=int) # Default size 50
+        box_size = request.args.get('size', 10, type=int) # Default size 10
         error_correction_level = request.args.get('ecc', 'L').upper() # Default L
         output_format = request.args.get('format', 'SVG').upper() # Default SVG
+        margin = request.args.get('margin', 4, type=int) # Default margin 4 pixels
 
         qr_error_correction = error_correction_map.get(error_correction_level, qrcode.constants.ERROR_CORRECT_L)
 
         # Validate output format
         if output_format not in ['PNG', 'JPEG', 'BMP', 'GIF', 'SVG']:
             return "Invalid output format. Supported formats: PNG, SVG, JPEG, BMP, GIF.", 400
-
-        margin = request.args.get('margin', 4, type=int) # Default margin 4 pixels
 
         qr = qrcode.QRCode(
             version=None,
@@ -69,4 +68,4 @@ def generate_qr():
         return f"Error generating QR code: {e}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=77)
+    app.run(host='0.0.0.0', port=7777)

@@ -4,7 +4,7 @@ services:
   qr-generator:
     image: python:3.13.2-slim
     ports:
-      - 77:77
+      - 7777:7777
     working_dir: /app
     volumes:
       - ./src:/app/src
