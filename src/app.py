@@ -1,21 +1,12 @@
 import io
-import qrcode
-import qrcode.image.svg
+import segno
 from flask import Flask, request, send_file
+import re
 
-# Map error correction levels
-error_correction_map = {
-    'L': qrcode.constants.ERROR_CORRECT_L,
-    'M': qrcode.constants.ERROR_CORRECT_M,
-    'Q': qrcode.constants.ERROR_CORRECT_Q,
-    'H': qrcode.constants.ERROR_CORRECT_H,
-}
-
+error_correction_levels = [ 'l', 'm', 'q', 'h' ]
+file_formats = [ 'SVG', 'PNG' ]
 mimetype_map = {
     'PNG': 'image/png',
-    'JPEG': 'image/jpeg',
-    'BMP': 'image/bmp',
-    'GIF': 'image/gif',
     'SVG': 'image/svg+xml',
 }
 
@@ -30,36 +21,38 @@ def generate_qr():
     try:
         # Optional parameters
         box_size = request.args.get('size', 10, type=int) # Default size 10
-        error_correction_level = request.args.get('ecc', 'L').upper() # Default L
-        output_format = request.args.get('format', 'SVG').upper() # Default SVG
+        qr_error_correction = request.args.get('ecc', error_correction_levels[0]).lower() # Default L
+        output_format = request.args.get('format', file_formats[0]).upper() # Default SVG
         margin = request.args.get('margin', 4, type=int) # Default margin 4 pixels
 
-        qr_error_correction = error_correction_map.get(error_correction_level, qrcode.constants.ERROR_CORRECT_L)
+        if qr_error_correction not in error_correction_levels:
+            return f"Invalid ECC level. Supported levels: {error_correction_levels}", 400
 
-        # Validate output format
-        if output_format not in ['PNG', 'JPEG', 'BMP', 'GIF', 'SVG']:
-            return "Invalid output format. Supported formats: PNG, SVG, JPEG, BMP, GIF.", 400
+        if output_format not in file_formats:
+            return f"Invalid output format. Supported formats: {file_formats}", 400
 
-        qr = qrcode.QRCode(
-            version=None,
-            error_correction=qr_error_correction,
-            box_size=box_size,
-            border=margin
-        )
-        qr.add_data(data)
-        qr.make(fit=True)
+
+        buf = io.BytesIO()
+        qrcode = segno.make(data, error=qr_error_correction, micro=False)
 
         if output_format == "SVG":
-            img = qr.make_image(image_factory=qrcode.image.svg.SvgPathImage)
-            buf = io.BytesIO(img.to_string())
-            buf.seek(0)
-        
+            qrcode.save(buf,
+                        kind=output_format.lower(),
+                        scale=box_size,
+                        border=margin,
+                        xmldecl=False,
+                        svgclass=None,
+                        lineclass=None,
+                        omitsize=False)
+
         else:
-            img = qr.make_image(fill_color="black", back_color="white")
-            buf = io.BytesIO()
-            img.save(buf, format=output_format)
-            buf.seek(0)
-        
+            qrcode.save(buf,
+                        kind=output_format.lower(),
+                        scale=box_size,
+                        border=margin)
+
+        buf.seek(0)
+
         extension = output_format.lower()
         return send_file(buf, mimetype=mimetype_map.get(output_format, 'application/octet-stream'), download_name=f"qr_code.{extension}")
 
