@@ -9,6 +9,7 @@ services:
     volumes:
       - ./src:/app/src
       - ./requirements.txt:/app/requirements.txt
+      - ./certs:/app/certs
     command: >
       sh -c "pip install --disable-pip-version-check --root-user-action=ignore --no-cache-dir -r requirements.txt
       && python src/app.py"

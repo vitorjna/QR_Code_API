@@ -1,7 +1,9 @@
 import io
-import segno
-from flask import Flask, request, send_file
+import os
 import re
+import segno
+from dotenv import load_dotenv
+from flask import Flask, request, send_file
 
 error_correction_levels = [ 'l', 'm', 'q', 'h' ]
 file_formats = [ 'SVG', 'PNG' ]
@@ -10,13 +12,44 @@ mimetype_map = {
     'SVG': 'image/svg+xml',
 }
 
+HTML_START_ERROR = r"<p style='color:red;'>"
+HTML_END_ERROR = r"</p>"
+
 app = Flask(__name__)
+
+generate_qr_help = """
+<h3>Welcome to the QR Code API!</h3>
+<p>To generate a QR code, send a GET request to the <code>/generate_qr</code> endpoint with the following parameters:</p>
+
+<h4>Required:</h4>
+<ul>
+    <li><strong>data</strong>: The data to encode in the QR code (e.g., text, URL).</li>
+</ul>
+
+<h4>Optional:</h4>
+<ul>
+    <li><strong>size</strong>: The size of each box (pixel) in the QR code. Default is 10. (Type: integer)</li>
+    <li><strong>ecc</strong>: Error Correction Level. Controls the amount of data that can be recovered if the QR code is damaged.
+        <ul><li>Supported: l (Low), m (Medium), q (Quartile), h (High). Default is 'l'.</li></ul>
+    </li>
+    <li><strong>format</strong>: The output format of the QR code image.
+        <ul><li>Supported: SVG, PNG. Default is 'SVG'.</li></ul>
+    </li>
+    <li><strong>margin</strong>: The quiet zone around the QR code in modules. Default is 4. (Type: integer)</li>
+</ul>
+
+<h4>Examples:</h4>
+<ul>
+    <li><code>/generate_qr?data=Hello%20World</code></li>
+    <li><code>/generate_qr?data=https://example.com&size=20&ecc=h&format=PNG&margin=5</code></li>
+</ul>
+"""
 
 @app.route('/generate_qr', methods=['GET'])
 def generate_qr():
     data = request.args.get('data')
     if not data:
-        return "Please provide 'data' as a query parameter.", 400
+        return f"{HTML_START_ERROR}Please provide 'data' as a query parameter.{HTML_END_ERROR}</br></br>" + generate_qr_help, 400
 
     try:
         # Optional parameters
@@ -26,10 +59,10 @@ def generate_qr():
         margin = request.args.get('margin', 4, type=int) # Default margin 4 pixels
 
         if qr_error_correction not in error_correction_levels:
-            return f"Invalid ECC level. Supported levels: {error_correction_levels}", 400
+            return f"{HTML_START_ERROR}Invalid ECC level. Supported levels: {error_correction_levels}{HTML_END_ERROR}</br></br>" + generate_qr_help, 400
 
         if output_format not in file_formats:
-            return f"Invalid output format. Supported formats: {file_formats}", 400
+            return f"{HTML_START_ERROR}Invalid output format. Supported formats: {file_formats}{HTML_END_ERROR}</br></br>" + generate_qr_help, 400
 
 
         buf = io.BytesIO()
@@ -60,4 +93,12 @@ def generate_qr():
         return f"Error generating QR code: {e}", 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=7777, ssl_context='adhoc')
+    load_dotenv()
+    cert_path = os.getenv('CERT_PATH')
+    key_path = os.getenv('KEY_PATH')
+
+    if cert_path and key_path:
+        app.run(host='0.0.0.0', port=7777, ssl_context=(cert_path, key_path))
+    else:
+        print("Warning: SSL certificate paths not found in .env. Running with adhoc SSL context.")
+        app.run(host='0.0.0.0', port=7777, ssl_context='adhoc')
