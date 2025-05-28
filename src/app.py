@@ -36,12 +36,15 @@ generate_qr_help = """
         <ul><li>Supported: SVG, PNG. Default is 'SVG'.</li></ul>
     </li>
     <li><strong>margin</strong>: The quiet zone around the QR code in modules. Default is 4. (Type: integer)</li>
+    <li><strong>color_qr</strong>: The color of the QR code modules. Default is black. (Type: string, e.g., 'red', 'FF0000', 'FF0000FF'). Note: The '#' symbol for hex codes must be omitted or URL-encoded as '%23'. Supports RRGGBBAA for transparency.</li>
+    <li><strong>color_bg</strong>: The background color of the QR code. Default is white. (Type: string, e.g., 'blue', '0000FF', '0000FFFF'). Note: The '#' symbol for hex codes must be omitted or URL-encoded as '%23'. Supports RRGGBBAA for transparency.</li>
 </ul>
 
 <h4>Examples:</h4>
 <ul>
     <li><code>/generate_qr?data=Hello%20World</code></li>
     <li><code>/generate_qr?data=https://example.com&size=20&ecc=h&format=PNG&margin=5</code></li>
+    <li><code>/generate_qr?data=ColorExample&color_qr=blue&color_bg=yellow</code></li>
 </ul>
 """
 
@@ -57,6 +60,8 @@ def generate_qr():
         qr_error_correction = request.args.get('ecc', error_correction_levels[0]).lower() # Default L
         output_format = request.args.get('format', file_formats[0]).upper() # Default SVG
         margin = request.args.get('margin', 4, type=int) # Default margin 4 pixels
+        qr_color = request.args.get('color_qr', "#000000") # Default black
+        qr_background = request.args.get('color_bg', "#FFFFFF") # Default white
 
         if qr_error_correction not in error_correction_levels:
             return f"{HTML_START_ERROR}Invalid ECC level. Supported levels: {error_correction_levels}{HTML_END_ERROR}</br></br>" + generate_qr_help, 400
@@ -76,13 +81,17 @@ def generate_qr():
                         xmldecl=False,
                         svgclass=None,
                         lineclass=None,
-                        omitsize=False)
+                        omitsize=False,
+                        light=qr_background,
+                        dark=qr_color)
 
         else:
             qrcode.save(buf,
                         kind=output_format.lower(),
                         scale=box_size,
-                        border=margin)
+                        border=margin,
+                        light=qr_background,
+                        dark=qr_color)
 
         buf.seek(0)
 

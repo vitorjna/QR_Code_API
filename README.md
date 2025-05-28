@@ -105,6 +105,8 @@ The API exposes a single endpoint for QR code generation: `/generate_qr`.
 *   `ecc` (optional): Error correction level. Can be `L` (Low), `M` (Medium), `Q` (Quartile), or `H` (High). Default is `L`.
 *   `format` (optional): Output image format. Supported formats: `PNG`, `SVG`. Default is `SVG`.
 *   `margin` (optional): The size of the border in boxes (pixels). Default is `4`.
+*   `color_qr` (optional): The color of the QR code modules. Default is black. (Type: string, e.g., 'red', 'FF0000', 'FF0000FF'). Note: The '#' symbol for hex codes must be omitted or URL-encoded as '%23'. Supports RRGGBBAA for transparency.
+*   `color_bg` (optional): The background color of the QR code. Default is white. (Type: string, e.g., 'blue', '0000FF', '0000FFFF'). Note: The '#' symbol for hex codes must be omitted or URL-encoded as '%23'. Supports RRGGBBAA for transparency.
 
 ### Examples
 
@@ -121,6 +123,11 @@ The API exposes a single endpoint for QR code generation: `/generate_qr`.
 3.  **Generate a JPEG QR code with a larger margin:**
     ```
     https://localhost:7777/generate_qr?data=My%20Custom%20Text&format=JPEG&margin=10
+    ```
+
+4.  **Generate a QR code with custom colors:**
+    ```
+    https://localhost:7777/generate_qr?data=ColorExample&color_qr=blue&color_bg=yellow
     ```
 
 ## Error Handling
