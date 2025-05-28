@@ -6,6 +6,7 @@ This project provides a simple API for generating QR codes. It allows users to g
 
 * [Features](#features)
 * [How to Use](#how-to-use)
+  * [Environment Variables](#environment-variables)
   * [Local Setup and Installation](#local-setup-and-installation)
   * [Running with Docker](#running-with-docker)
 * [API Usage](#api-usage)
@@ -29,6 +30,21 @@ The project can be run in 2 ways:
 * a local installation where the python script will run manually
 * a Docker setup where the script runs on top of a pre-built python image
 
+### Environment Variables
+
+This project uses a `.env` file to manage environment variables, particularly for SSL certificate paths. A sample `.env` file is provided as `.env.example`.
+
+To use it:
+1. Create a copy of `.env.example` and rename it to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   On Windows:
+   ```bash
+   copy .env.example .env
+   ```
+2. Edit the `.env` file to set your `CERT_PATH` and `KEY_PATH` if you want to run the Flask app with SSL. If these variables are not set, the application will run with an adhoc SSL context (suitable for development/testing).
+
 ### Local Setup and Installation
 
 To run this project locally, follow these steps:
@@ -38,16 +54,18 @@ To run this project locally, follow these steps:
     git clone https://github.com/vitorjna/QR_Code_API.git
     cd QR_Code_API
     ```
-2.  **Create a virtual environment (recommended):**
+2.  **Set up environment variables:**
+    Follow the instructions in the [Environment Variables](#environment-variables) section to configure your `.env` file.
+3.  **Create a virtual environment (recommended):**
     ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows: `venv\Scripts\activate`
     ```
-3.  **Install dependencies:**
+4.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-4.  **Run the application:**
+5.  **Run the application:**
     ```bash
     python src/app.py
     ```
@@ -60,13 +78,16 @@ To run this project locally, follow these steps:
 1.  **Prerequisites:**
         Ensure you have Docker and Docker Compose installed on your system.
 
-2.  **Run the Docker container:**
+2.  **Set up environment variables:**
+    Follow the instructions in the [Environment Variables](#environment-variables) section to configure your `.env` file.
+
+3.  **Run the Docker container:**
     ```bash
     docker compose --profile QR up -d
     ```
     This command will pull the `python:3.13.2-slim` Docker image (if not already present) and start the `qr-generator` service. It will also install the dependencies and run the application inside the container.
 
-3.  **Access the API:**
+4.  **Access the API:**
         The API will be accessible at `https://localhost:7777`.
 
 ## API Usage
